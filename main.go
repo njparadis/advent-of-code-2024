@@ -18,10 +18,13 @@ func main() {
 		solutions.Day3()
 	case "4":
 		solutions.Day4()
+	case "5":
+		solutions.Day5()
 	default:
 		solutions.Day1()
 		solutions.Day2()
 		solutions.Day3()
 		solutions.Day4()
+		solutions.Day5()
 	}
 }
