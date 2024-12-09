@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 )
 
 func Day6() {
@@ -52,20 +53,38 @@ func Day6() {
 			}
 		}
 	}
-	loopCount := 0
 
-	// Only try placing `#` on cells visited in the "normal" timeline
+	loopCount := 0
+	var loopCountMu sync.Mutex
+	var wg sync.WaitGroup
+
 	for y := range grid {
 		for x := range grid[y] {
-			if visited[y][x] && grid[y][x] == "." { // Only consider visited empty cells
-				grid[y][x] = "#" // Place a `#`
-				if causesLoop(grid, STARTING_X, STARTING_Y, UP) {
-					loopCount++
-				}
-				grid[y][x] = "." // Remove the `#`
+			if visited[y][x] && grid[y][x] == "." {
+				wg.Add(1)
+
+				go func(y, x int) {
+					defer wg.Done()
+
+					// Create a copy of the grid for this goroutine
+					gridCopy := make([][]string, len(grid))
+					for i := range grid {
+						gridCopy[i] = append([]string(nil), grid[i]...)
+					}
+
+					// Modify the copy of the grid
+					gridCopy[y][x] = "#" // Place a `#`
+					if causesLoop(gridCopy, STARTING_X, STARTING_Y, UP) {
+						loopCountMu.Lock()
+						loopCount++
+						loopCountMu.Unlock()
+					}
+				}(y, x)
 			}
 		}
 	}
+
+	wg.Wait()
 
 	fmt.Println("Unique places visited: ", total)
 	fmt.Println("Number of cells that cause a loop: ", loopCount)
