@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	// "sync"
 )
 
 func Day7() {
