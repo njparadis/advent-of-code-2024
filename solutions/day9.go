@@ -36,40 +36,8 @@ func Day9() {
 		}
 	}
 
-	var diskUsage []int
-	fileSizes := make(map[int]int)
-
-	for i, v := range diskMap {
-		fileId := -1
-		if i%2 == 0 {
-			fileId = i / 2
-			fileSizes[fileId] = v
-		}
-		block := make([]int, v)
-		for j := 0; j < v; j++ {
-			block[j] = fileId
-		}
-		diskUsage = append(diskUsage, block...)
-	}
-	fmt.Println(fileSizes)
-	diskUsage = []int{
-		0, 0, -1, -1, -1,
-		1, 1, 1, -1, -1, -1,
-		2, -1, -1, -1,
-		3, 3, 3, -1,
-		4, 4, -1,
-		5, 5, 5, 5, -1,
-		6, 6, 6, 6, -1,
-		7, 7, 7, -1,
-		8, 8, 8, 8,
-		9, 9,
-	}
-
-	diskCopy := make([]int, len(diskUsage))
-	copy(diskCopy, diskUsage)
-
-	// day9part1(diskUsage)
-	day9part2(diskCopy, fileSizes)
+	day9part1(diskUsage(diskMap))
+	day9part2(diskUsage(diskMap))
 }
 
 func day9part1(disk []int) {
@@ -81,7 +49,6 @@ func day9part1(disk []int) {
 			left++
 		}
 
-		// Move the right pointer to the first positive number
 		for right >= 0 && disk[right] < 0 {
 			right--
 		}
@@ -95,50 +62,67 @@ func day9part1(disk []int) {
 	fmt.Println("Checksum:", checksum(disk))
 }
 
-func day9part2(disk []int, fileSizes map[int]int) {
-	fmt.Println(disk)
-	// Try to move files in decreasing order of file IDs
-	for fileID := len(fileSizes); fileID > 0; fileID-- {
-		// Get the size of the file
-		fileSize := fileSizes[fileID]
+func day9part2(disk []int) {
+	for end := len(disk) - 1; end >= 0; end-- {
+		if disk[end] < 0 {
+			continue
+		}
 
-		// Try to find a contiguous block of free space large enough
-		spaceStart := -1
-		freeSpaceCount := 0
-		for i := 0; i < len(disk); i++ {
-			if disk[i] == -1 { // Free space
-				if spaceStart == -1 {
-					spaceStart = i // Mark the start of the free space block
-				}
-				freeSpaceCount++
-			} else {
-				// If we hit a non-free space, reset the free space count
-				spaceStart = -1
-				freeSpaceCount = 0
-			}
-
-			// If we found enough contiguous free space, try to move the file
-			if freeSpaceCount >= fileSize {
-				// Move the file to the leftmost available space
-				for j := 0; j < fileSize; j++ {
-					disk[spaceStart+j] = fileID // Place the file in the free space
-				}
-
-				// Clear the old position of the file (assuming the file has a size)
-				for k := 0; k < len(disk); k++ {
-					if disk[k] == fileID {
-						disk[k] = -1
-					}
-				}
-
-				// fmt.Printf("Moved file ID %d of size %d to position %d\n", fileID, fileSize, spaceStart)
+		// find where the start of the block is
+		var start int
+		for i := end; i >= 0; i-- {
+			if disk[i] != disk[end] {
+				start = i + 1
 				break
 			}
 		}
-	}
-	fmt.Println(disk)
-	fmt.Println("Checksum:", checksum(disk))
+		length := end - start + 1
 
+		found := false
+		for j := 0; j < start; j++ {
+			if disk[j] >= 0 {
+				continue
+			}
+
+			enoughSpace := true
+			for k := j; k < j+length; k++ {
+				if disk[k] >= 0 {
+					enoughSpace = false
+					break
+				}
+
+			}
+
+			if enoughSpace {
+				for k := 0; k < length; k++ {
+					disk[j+k], disk[start+k] = disk[start+k], disk[j+k]
+				}
+				found = true
+				break
+			}
+
+		}
+		if !found {
+			end = start
+		}
+	}
+	fmt.Println("Checksum:", checksum(disk))
+}
+
+func diskUsage(diskMap []int) []int {
+	usage := make([]int, 0)
+	for i, v := range diskMap {
+		fileId := -1
+		if i%2 == 0 {
+			fileId = i / 2
+		}
+		block := make([]int, v)
+		for j := 0; j < v; j++ {
+			block[j] = fileId
+		}
+		usage = append(usage, block...)
+	}
+	return usage
 }
 
 func checksum(disk []int) int {
