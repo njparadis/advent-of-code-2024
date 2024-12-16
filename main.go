@@ -60,7 +60,7 @@ func main() {
 		fmt.Printf("Day 9 runtime: %v\n\n", duration)
 	case "10":
 		start := time.Now()
-		solutions.Day7() // TODO
+		solutions.Day10()
 		duration := time.Since(start)
 		fmt.Printf("Day 10 runtime: %v\n\n", duration)
 	case "11":
@@ -117,7 +117,7 @@ func main() {
 		fmt.Printf("Day 9 runtime: %v\n\n", duration9)
 
 		start10 := time.Now()
-		// TODO
+		solutions.Day10()
 		duration10 := time.Since(start10)
 		fmt.Printf("Day 10 runtime: %v\n\n", duration10)
 
