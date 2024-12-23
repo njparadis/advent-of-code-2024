@@ -78,6 +78,11 @@ func main() {
 		solutions.Day13()
 		duration := time.Since(start)
 		fmt.Printf("Day 13 runtime: %v\n\n", duration)
+	case "14":
+		start := time.Now()
+		solutions.Day14()
+		duration := time.Since(start)
+		fmt.Printf("Day 14 runtime: %v\n\n", duration)
 	default:
 		start := time.Now()
 
@@ -139,12 +144,17 @@ func main() {
 		start12 := time.Now()
 		solutions.Day12()
 		duration12 := time.Since(start12)
-		fmt.Printf("Day 11 runtime: %v\n\n", duration12)
+		fmt.Printf("Day 12 runtime: %v\n\n", duration12)
 
 		start13 := time.Now()
 		solutions.Day13()
 		duration13 := time.Since(start13)
-		fmt.Printf("Day 11 runtime: %v\n\n", duration13)
+		fmt.Printf("Day 13 runtime: %v\n\n", duration13)
+
+		start14 := time.Now()
+		solutions.Day14()
+		duration14 := time.Since(start14)
+		fmt.Printf("Day 14 runtime: %v\n\n", duration14)
 
 		duration := time.Since(start)
 		fmt.Printf("Total runtime: %v\n", duration)
